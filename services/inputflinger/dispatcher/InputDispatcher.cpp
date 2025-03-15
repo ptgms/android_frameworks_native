@@ -1819,7 +1819,7 @@ bool InputDispatcher::dispatchKeyLocked(nsecs_t currentTime, std::shared_ptr<con
 
     // Give the policy a chance to intercept the key.
     if (entry->interceptKeyResult == KeyEntry::InterceptKeyResult::UNKNOWN) {
-        if (entry->policyFlags & POLICY_FLAG_PASS_TO_USER) {
+        if (entry->policyFlags & POLICY_FLAG_PASS_TO_USER || entry->keyCode == AKEYCODE_POWER) {
             sp<IBinder> focusedWindowToken =
                     mFocusResolver.getFocusedWindowToken(getTargetDisplayId(*entry));
 
@@ -1840,7 +1840,7 @@ bool InputDispatcher::dispatchKeyLocked(nsecs_t currentTime, std::shared_ptr<con
     }
 
     // Clean up if dropping the event.
-    if (*dropReason != DropReason::NOT_DROPPED) {
+    if (*dropReason != DropReason::NOT_DROPPED && entry->keyCode != AKEYCODE_POWER) {
         setInjectionResult(*entry,
                            *dropReason == DropReason::POLICY ? InputEventInjectionResult::SUCCEEDED
                                                              : InputEventInjectionResult::FAILED);
